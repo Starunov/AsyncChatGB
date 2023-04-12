@@ -4,7 +4,7 @@ import json
 import argparse
 import ipaddress
 
-from global_vars import *
+from lesson3.global_vars import *
 
 
 def get_message(client):
@@ -31,10 +31,15 @@ def send_message(client, message: bytes):
     client.send(message)
 
 
-def start(address: str, port: int):
+def get_socket(address: str, port: int, listen: int = 5):
     s = socket(AF_INET, SOCK_STREAM)
     s.bind((address, port))
-    s.listen(5)
+    s.listen(listen)
+    return s
+
+
+def start(address: str, port: int):
+    s = get_socket(address, port)
 
     while True:
         client, addr = s.accept()

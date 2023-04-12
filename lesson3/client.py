@@ -4,7 +4,7 @@ import json
 import argparse
 import ipaddress
 
-from global_vars import *
+from lesson3.global_vars import *
 
 
 def presence_msg(username=None, password=None, status='online'):
