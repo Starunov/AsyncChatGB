@@ -1,5 +1,5 @@
 import select
-from socket import socket, AF_INET, SOCK_STREAM
+from socket import socket, AF_INET, SOCK_DGRAM, SOL_SOCKET, SO_REUSEADDR
 import time
 import json
 import argparse
@@ -9,66 +9,35 @@ from global_vars import *
 from logs.server_log_config import server_logger, stream_logger, log
 
 
-def read_requests(r_clients: list, all_clients: list):
-    """
-    Читает запросы из списка клиентов.
-    Возвращает словарь вида {сокет: запрос}
-    """
-
-    responses = {}
-    for sock in r_clients:
-        try:
-            data = sock.recv(BUFFERSIZE).decode(ENCODING)
-            responses[sock] = data
-        except:
-            stream_logger.info(f'Клиент {sock} отключился')
-            all_clients.remove(sock)
-
-    return responses
-
-
-def write_responses(requests, w_clients, all_clients):
-    for sock in w_clients:
-        try:
-            # Отправляем на каждый доступный сокет все сообщения из requests
-            for resp in requests.values():
-                sock.send(resp.encode(ENCODING))
-        except:
-            stream_logger.info(f'Клиент {sock.fileno()} {sock.getpeername()} отключился')
-            sock.close()
-            all_clients.remove(sock)
-
-
-
 @log
 def start(address: str, port: int):
-    clients = []
-
-    s = socket(AF_INET, SOCK_STREAM)
+    s = socket(AF_INET, SOCK_DGRAM)
+    s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind((address, port))
-    s.listen(5)
-    s.settimeout(0.2)
+
+    members = []
 
     while True:
-        try:
-            clt, addr = s.accept()
-        except OSError:
-            pass
-        else:
-            stream_logger.info(f'Получен запрос на соединение от {addr}')
-            clients.append(clt)
-        finally:
-            wait = 0
-            rlist = []
-            wlist = []
-            try:
-                rlist, wlist, erlist = select.select(clients, clients, [], wait)
-            except:
-                pass
 
-            requests = read_requests(rlist, clients)
-            if requests:
-                write_responses(requests, wlist, clients)
+        msg, addr = s.recvfrom(BUFFERSIZE)
+        if addr not in members:
+            members.append(addr)
+
+        if not msg:
+            continue
+
+        client_id = addr[1]
+        msg_text = msg.decode(ENCODING)
+
+        if msg_text == '__join':
+            stream_logger.info(f'Client {client_id} joined chat')
+            continue
+
+        if msg_text == '__members':
+            stream_logger.info(f'Client {client_id} requested members')
+            active_clients = [f'client{m[1]}' for m in members if m != addr]
+            s.sendto(f'active members: {"; ".join(active_clients)}'.encode(ENCODING), addr)
+            continue
 
 
 if __name__ == '__main__':
