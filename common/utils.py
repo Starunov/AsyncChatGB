@@ -2,12 +2,12 @@ from common.variables import *
 from errors import IncorrectDataRecivedError, NonDictInputError
 import json
 import sys
-sys.path.append('../')
 from decos import log
+sys.path.append('../')
 
 
 # Утилита приёма и декодирования сообщения
-# принимает байты выдаёт словарь, если приняточто-то другое отдаёт ошибку значения
+# принимает байты, выдаёт словарь, если принято что-то другое отдаёт ошибку значения
 @log
 def get_message(client):
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
