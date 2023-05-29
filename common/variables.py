@@ -1,6 +1,6 @@
 import logging
 
-# Порт по умолчанию для сетевого взаимодействия
+# Порт поумолчанию для сетевого ваимодействия
 DEFAULT_PORT = 7777
 # IP адрес по умолчанию для подключения клиента
 DEFAULT_IP_ADDRESS = '127.0.0.1'
@@ -15,7 +15,7 @@ LOGGING_LEVEL = logging.DEBUG
 # База данных для хранения данных сервера:
 SERVER_CONFIG = 'server.ini'
 
-# Протокол JIM основные ключи:
+# Прококол JIM основные ключи:
 ACTION = 'action'
 TIME = 'time'
 USER = 'user'

@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QLabel, QTableView, QDialog, QPushButton, \
-    QLineEdit, QFileDialog, QMessageBox
+    QLineEdit, QFileDialog , QMessageBox
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt
 import os
@@ -57,26 +57,25 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
         # Кнопка выхода
-        exit_action = QAction('Выход', self)
-        exit_action.setShortcut('Ctrl+Q')
-        exit_action.triggered.connect(qApp.quit)
+        exitAction = QAction('Выход', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.triggered.connect(qApp.quit)
 
         # Кнопка обновить список клиентов
         self.refresh_button = QAction('Обновить список', self)
 
         # Кнопка настроек сервера
-        self.config_btn = QAction('Настройки сервера', self)
+        self.config_btn = QAction('Настройки сервера' , self)
 
         # Кнопка вывести историю сообщений
         self.show_history_button = QAction('История клиентов', self)
 
         # Статусбар
-        # dock widget
         self.statusBar()
 
         # Тулбар
         self.toolbar = self.addToolBar('MainBar')
-        self.toolbar.addAction(exit_action)
+        self.toolbar.addAction(exitAction)
         self.toolbar.addAction(self.refresh_button)
         self.toolbar.addAction(self.show_history_button)
         self.toolbar.addAction(self.config_btn)
@@ -89,11 +88,11 @@ class MainWindow(QMainWindow):
         # Надпись о том, что ниже список подключённых клиентов
         self.label = QLabel('Список подключённых клиентов:', self)
         self.label.setFixedSize(240, 15)
-        self.label.move(10, 40)
+        self.label.move(10, 25)
 
         # Окно со списком подключённых клиентов.
         self.active_clients_table = QTableView(self)
-        self.active_clients_table.move(10, 55)
+        self.active_clients_table.move(10, 45)
         self.active_clients_table.setFixedSize(780, 400)
 
         # Последним параметром отображаем окно.
@@ -157,6 +156,7 @@ class ConfigWindow(QDialog):
             dialog = QFileDialog(self)
             path = dialog.getExistingDirectory()
             path = path.replace('/', '\\')
+            self.db_path.clear()
             self.db_path.insert(path)
 
         self.db_path_select.clicked.connect(open_file_dialog)
@@ -209,7 +209,7 @@ class ConfigWindow(QDialog):
 
 
 if __name__ == '__main__':
-
+    '''
     app = QApplication(sys.argv)
     ex = MainWindow()
     ex.statusBar().showMessage('Test Statusbar Message')
@@ -219,9 +219,11 @@ if __name__ == '__main__':
     test_list.appendRow([QStandardItem('4'), QStandardItem('5'), QStandardItem('6')])
     ex.active_clients_table.setModel(test_list)
     ex.active_clients_table.resizeColumnsToContents()
+    print('JKJKJK')
     app.exec_()
-    # app = QApplication(sys.argv)
-    # message = QMessageBox
-    # dial = ConfigWindow()
+    print('END')'''
+    app = QApplication(sys.argv)
+    message = QMessageBox
+    dial = ConfigWindow()
 
-    # app.exec_()
+    app.exec_()

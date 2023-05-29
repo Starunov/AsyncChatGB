@@ -46,9 +46,8 @@ class ServerStorage:
             self.sent = 0
             self.accepted = 0
 
-    def __init__(self , path):
+    def __init__(self, path):
         # Создаём движок базы данных
-        print(path)
         self.database_engine = create_engine(f'sqlite:///{path}', echo=False, pool_recycle=7200,
                                              connect_args={'check_same_thread': False})
 
@@ -115,7 +114,7 @@ class ServerStorage:
         self.session.query(self.ActiveUsers).delete()
         self.session.commit()
 
-    # Функция выполняющяяся при входе пользователя, записывает в базу факт входа
+    # Функция выполняющаяся при входе пользователя, записывает в базу факт входа
     def user_login(self, username, ip_address, port):
         # Запрос в таблицу пользователей на наличие там пользователя с таким именем
         rez = self.session.query(self.AllUsers).filter_by(name=username)
@@ -124,11 +123,11 @@ class ServerStorage:
         if rez.count():
             user = rez.first()
             user.last_login = datetime.datetime.now()
-        # Если нету, то создаздаём нового пользователя
+        # Если нет, то создаём нового пользователя
         else:
             user = self.AllUsers(username)
             self.session.add(user)
-            # Комит здесь нужен, чтобы присвоился ID
+            # Коммит здесь нужен, чтобы присвоился ID
             self.session.commit()
             user_in_history = self.UsersHistory(user.id)
             self.session.add(user_in_history)
@@ -141,7 +140,7 @@ class ServerStorage:
         history = self.LoginHistory(user.id, datetime.datetime.now(), ip_address, port)
         self.session.add(history)
 
-        # Сохрраняем изменения
+        # Сохраняем изменения
         self.session.commit()
 
     # Функция фиксирующая отключение пользователя
@@ -194,10 +193,10 @@ class ServerStorage:
             return
 
         # Удаляем требуемое
-        print(self.session.query(self.UsersContacts).filter(
+        self.session.query(self.UsersContacts).filter(
             self.UsersContacts.user == user.id,
             self.UsersContacts.contact == contact.id
-        ).delete())
+        ).delete()
         self.session.commit()
 
     # Функция возвращает список известных пользователей со временем последнего входа.
@@ -222,7 +221,7 @@ class ServerStorage:
         # Возвращаем список кортежей
         return query.all()
 
-    # Функция возвращающаяя историю входов по пользователю или всем пользователям
+    # Функция возвращающая историю входов по пользователю или всем пользователям
     def login_history(self, username=None):
         # Запрашиваем историю входа
         query = self.session.query(self.AllUsers.name,
@@ -238,7 +237,7 @@ class ServerStorage:
 
     # Функция возвращает список контактов пользователя.
     def get_contacts(self, username):
-        # Запрашивааем указанного пользователя
+        # Запрашиваем указанного пользователя
         user = self.session.query(self.AllUsers).filter_by(name=username).one()
 
         # Запрашиваем его список контактов

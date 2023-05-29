@@ -12,7 +12,7 @@ class ServerMaker(type):
             # Пробуем
             try:
                 ret = dis.get_instructions(clsdict[func])
-                # Если не функция то ловим исключение
+                # Если не функция, то ловим исключение
             except TypeError:
                 pass
             else:
@@ -42,7 +42,7 @@ class ClientMaker(type):
             # Пробуем
             try:
                 ret = dis.get_instructions(clsdict[func])
-                # Если не функция то ловим исключение
+                # Если не функция, то ловим исключение
             except TypeError:
                 pass
             else:
